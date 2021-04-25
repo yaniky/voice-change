@@ -1,0 +1,8 @@
+src/*
+build/*
+config/*
+public/*
+node_modules/*
+.idea
+yarn.lock
+yarn-error.log
