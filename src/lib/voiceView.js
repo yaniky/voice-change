@@ -40,7 +40,7 @@ export default class VoiceView {
         }
         this.ctx.beginPath();
         this.ctx.moveTo(this.pointX, this.pointY);
-        this.pointX += 0.001;
+        this.pointX += 0.003;
         this.pointY = this.baseY + nextY * this.yMul;
         this.ctx.lineTo(this.pointX, this.pointY);
         this.ctx.stroke();

@@ -8,12 +8,12 @@ const voiceView = new VoiceView({
 
 const audioPlayer = new Audioplayer({
     playerWay: Audioplayer.PLAY_WAY.BUFFER,
-    needChange: false,
+    needChange: true,
     voiceView: voiceView
 });
 
 document.getElementById("start1").onclick = async function() {
-    const hellowBuffer = await fetch("/static/hellow.m4a").then(res=> res.arrayBuffer());
+    const hellowBuffer = await fetch("/static/boy.m4a").then(res=> res.arrayBuffer());
 
     audioPlayer
         .setVoiceFreMul(2)

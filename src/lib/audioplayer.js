@@ -175,30 +175,28 @@ export default class Audioplayer {
                         newBuffer.push(this.linearInterpolation(inputData[index] * hann[index], inputData[(index + 1) % this.bufferSize] * hann[(index + 1) % this.bufferSize], sample%1));
                     }
                     for (let i = 0; i < inputBuffer.length; i += newBuffer.length * 0.75) {
-                    // index = Math.floor(sample*this.voiceFreMul)%this.bufferSize;
-                    // outputData[sample] = this.linearInterpolation(inputData[index], inputData[(index + 1) % this.bufferSize], (sample*this.voiceFreMul)%1);
                         let j = 0;
 
                         for (j = 0; j < newBuffer.length; j++) {
-                            if (i+j < inputBuffer.length) {
+                            // if (i+j < inputBuffer.length) {
                             // 若有上一段，需要加上
-                                outputData[i + j] += newBuffer[j];
-                                if (lastBuffer[channel] && lastBuffer[channel][j]) {
-                                    outputData[i + j] += lastBuffer[channel][j];
-                                    lastBuffer[channel][j] = 0;
-                                }
-                            } else {
-                            // 剩余部分用于下一段
-                                newBuffer.splice(0, j-1 >= 0 ? j - 1 : 0);
-                                lastBuffer[channel] = newBuffer;
-                                break;
-                            }
+                            outputData[i + j] += newBuffer[j];
+                            // if (lastBuffer[channel] && lastBuffer[channel][j]) {
+                            //     outputData[i + j] += lastBuffer[channel][j];
+                            //     lastBuffer[channel][j] = 0;
+                            // }
+                            // } else {
+                            // // 剩余部分用于下一段
+                            //     newBuffer.splice(0, j-1 >= 0 ? j - 1 : 0);
+                            //     lastBuffer[channel] = newBuffer;
+                            //     break;
+                            // }
                         }
 
-                        if (j < newBuffer.length) {
-                        // 未执行完for循环，是break出来的
-                            break;
-                        }
+                        // if (j < newBuffer.length) {
+                        // // 未执行完for循环，是break出来的
+                        //     break;
+                        // }
                     }
                 } else {
                     for (let sample = 0; sample < inputBuffer.length; sample++) {
