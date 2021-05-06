@@ -166,6 +166,7 @@ export default class Audioplayer {
                 outputData = outputBuffer.getChannelData(channel);
                 if (this.needChange) {
                     const newBuffer = [];
+                    const resData = new Float32Array(inputBuffer.length);
 
                     let index = 0;
 
@@ -178,25 +179,28 @@ export default class Audioplayer {
                         let j = 0;
 
                         for (j = 0; j < newBuffer.length; j++) {
-                            // if (i+j < inputBuffer.length) {
+                            if (i+j < inputBuffer.length) {
                             // 若有上一段，需要加上
-                            outputData[i + j] += newBuffer[j];
-                            // if (lastBuffer[channel] && lastBuffer[channel][j]) {
-                            //     outputData[i + j] += lastBuffer[channel][j];
-                            //     lastBuffer[channel][j] = 0;
-                            // }
-                            // } else {
-                            // // 剩余部分用于下一段
-                            //     newBuffer.splice(0, j-1 >= 0 ? j - 1 : 0);
-                            //     lastBuffer[channel] = newBuffer;
-                            //     break;
-                            // }
+                                resData[i + j] += newBuffer[j];
+                                if (lastBuffer[channel] && lastBuffer[channel][j]) {
+                                    outputData[i + j] += lastBuffer[channel][j];
+                                    lastBuffer[channel][j] = 0;
+                                }
+                            } else {
+                            // 剩余部分用于下一段
+                                newBuffer.splice(0, j-1 >= 0 ? j - 1 : 0);
+                                lastBuffer[channel] = newBuffer;
+                                break;
+                            }
                         }
 
-                        // if (j < newBuffer.length) {
-                        // // 未执行完for循环，是break出来的
-                        //     break;
-                        // }
+                        if (j < newBuffer.length) {
+                        // 未执行完for循环，是break出来的
+                            break;
+                        }
+                    }
+                    for (let i = 0; i < resData.length; i++) {
+                        outputData[i] = resData[i];
                     }
                 } else {
                     for (let sample = 0; sample < inputBuffer.length; sample++) {
