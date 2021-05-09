@@ -25,9 +25,9 @@ export default class Audioplayer {
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         this.bufferSize = 4096;
 
-        this.voiceFreMul = 2; // 音频倍数
-        this.peakingFre = 440; // 需要增强的频率
-        this.peakingRang = 30; // 需要增强的区间
+        this.voiceFreMul = 1.8; // 音频倍数
+        this.peakingFre = 600; // 需要增强的频率
+        this.peakingRang = 20; // 需要增强的区间
         this.minFre = 200; // 过滤低频
 
         this.playerWay = playerWay;
@@ -89,7 +89,7 @@ export default class Audioplayer {
         low.Q.value = 1;
         source.connect(low);
 
-        // 共振峰
+        // 共振峰1
         const biquadFilter = this.audioCtx.createBiquadFilter();
 
         biquadFilter.type = "peaking";
@@ -175,7 +175,7 @@ export default class Audioplayer {
                         index = Math.floor(sample)%this.bufferSize;
                         newBuffer.push(this.linearInterpolation(inputData[index] * hann[index], inputData[(index + 1) % this.bufferSize] * hann[(index + 1) % this.bufferSize], sample%1));
                     }
-                    for (let i = 0; i < inputBuffer.length; i += newBuffer.length * 0.75) {
+                    for (let i = 0; i < inputBuffer.length; i += parseInt(newBuffer.length * 0.6, 10)) {
                         let j = 0;
 
                         for (j = 0; j < newBuffer.length; j++) {
@@ -193,7 +193,6 @@ export default class Audioplayer {
                                 break;
                             }
                         }
-
                         if (j < newBuffer.length) {
                         // 未执行完for循环，是break出来的
                             break;

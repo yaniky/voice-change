@@ -15,9 +15,9 @@ const audioPlayer = new Audioplayer({
 document.getElementById("start1").onclick = async function() {
     const hellowBuffer = await fetch("/static/boy.m4a").then(res=> res.arrayBuffer());
 
-    audioPlayer
-        .setVoiceFreMul(2)
-        .setPeaking(440);
+    // audioPlayer
+    //     .setVoiceFreMul(2)
+    //     .setPeaking(440);
     await audioPlayer.setBuffer(hellowBuffer);
     audioPlayer.ready().play();
 };
