@@ -175,7 +175,9 @@ export default class Audioplayer {
                         index = Math.floor(sample)%this.bufferSize;
                         newBuffer.push(this.linearInterpolation(inputData[index] * hann[index], inputData[(index + 1) % this.bufferSize] * hann[(index + 1) % this.bufferSize], sample%1));
                     }
-                    for (let i = 0; i < inputBuffer.length; i += parseInt(newBuffer.length * 0.6, 10)) {
+                    const newBufferLength = newBuffer.length;
+
+                    for (let i = 0; i < inputBuffer.length; i += Math.ceil(newBuffer.length * 0.25)) {
                         let j = 0;
 
                         for (j = 0; j < newBuffer.length; j++) {
@@ -187,14 +189,14 @@ export default class Audioplayer {
                                     lastBuffer[channel][j] = 0;
                                 }
                             } else {
-                            // 剩余部分用于下一段
+                                // 剩余部分用于下一段
                                 newBuffer.splice(0, j-1 >= 0 ? j - 1 : 0);
                                 lastBuffer[channel] = newBuffer;
                                 break;
                             }
                         }
-                        if (j < newBuffer.length) {
-                        // 未执行完for循环，是break出来的
+                        if (j < newBufferLength) {
+                            // 未执行完for循环，是break出来的
                             break;
                         }
                     }
