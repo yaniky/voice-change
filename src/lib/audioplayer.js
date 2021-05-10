@@ -25,10 +25,12 @@ export default class Audioplayer {
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         this.bufferSize = 4096;
 
-        this.voiceFreMul = 1.8; // 音频倍数
+        this.voiceFreMul = 1.5; // 音频倍数
         this.peakingFre = 600; // 需要增强的频率
+        this.peakingQ = 25; // 增强力度
         this.peakingRang = 20; // 需要增强的区间
-        this.minFre = 200; // 过滤低频
+
+        this.overload = 0.45; // 重叠率
 
         this.playerWay = playerWay;
 
@@ -81,26 +83,45 @@ export default class Audioplayer {
             return this;
         }
 
-        // 过滤低频
-        const low = this.audioCtx.createBiquadFilter();
-
-        low.type = "highpass";
-        low.frequency.value = this.minFre;
-        low.Q.value = 1;
-        source.connect(low);
-
         // 共振峰1
         const biquadFilter = this.audioCtx.createBiquadFilter();
 
         biquadFilter.type = "peaking";
         biquadFilter.frequency.value = this.peakingFre;
         biquadFilter.Q.value = this.peakingRang;
-        biquadFilter.gain.value = 10;
+        biquadFilter.gain.value = this.peakingQ;
 
-        this.scriptNode = this.changeAudioVoice(low);
+        // 共振峰2
+        const biquadFilter2 = this.audioCtx.createBiquadFilter();
+
+        biquadFilter2.type = "peaking";
+        biquadFilter2.frequency.value = this.peakingFre + 100;
+        biquadFilter2.Q.value = this.peakingRang;
+        biquadFilter2.gain.value = this.peakingQ - 5;
+
+        // 共振峰3
+        const biquadFilter3 = this.audioCtx.createBiquadFilter();
+
+        biquadFilter3.type = "peaking";
+        biquadFilter3.frequency.value = this.peakingFre + 150;
+        biquadFilter3.Q.value = this.peakingRang;
+        biquadFilter3.gain.value = this.peakingQ - 7;
+
+        // 共振峰3
+        const biquadFilter4 = this.audioCtx.createBiquadFilter();
+
+        biquadFilter4.type = "peaking";
+        biquadFilter4.frequency.value = this.peakingFre + 200;
+        biquadFilter4.Q.value = this.peakingRang;
+        biquadFilter4.gain.value = this.peakingQ - 9;
+
+        this.scriptNode = this.changeAudioVoice(source);
 
         this.scriptNode.connect(biquadFilter);
-        biquadFilter.connect(this.audioCtx.destination);
+        biquadFilter.connect(biquadFilter2);
+        biquadFilter2.connect(biquadFilter3);
+        biquadFilter3.connect(biquadFilter4);
+        biquadFilter4.connect(this.audioCtx.destination);
         return this;
     }
 
@@ -177,7 +198,7 @@ export default class Audioplayer {
                     }
                     const newBufferLength = newBuffer.length;
 
-                    for (let i = 0; i < inputBuffer.length; i += Math.ceil(newBuffer.length * 0.25)) {
+                    for (let i = 0; i < inputBuffer.length; i += Math.ceil(newBuffer.length * (1 - this.overload))) {
                         let j = 0;
 
                         for (j = 0; j < newBuffer.length; j++) {
