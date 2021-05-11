@@ -25,10 +25,10 @@ export default class Audioplayer {
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         this.bufferSize = 4096;
 
-        this.voiceFreMul = 1.5; // 音频倍数
-        this.peakingFre = 600; // 需要增强的频率
-        this.peakingQ = 25; // 增强力度
-        this.peakingRang = 20; // 需要增强的区间
+        this.voiceFreMul = 1.4; // 音频倍数
+        this.peakingFre = 550; // 需要增强的频率
+        this.peakingQ = 22; // 增强力度
+        this.peakingRang = 10; // 需要增强的区间
 
         this.overload = 0.45; // 重叠率
 
@@ -83,6 +83,14 @@ export default class Audioplayer {
             return this;
         }
 
+        // 过滤低频
+        const low = this.audioCtx.createBiquadFilter();
+
+        low.type = "highpass";
+        low.frequency.value = this.peakingFre - 100;
+        low.Q.value = 1;
+        source.connect(low);
+
         // 共振峰1
         const biquadFilter = this.audioCtx.createBiquadFilter();
 
@@ -95,7 +103,7 @@ export default class Audioplayer {
         const biquadFilter2 = this.audioCtx.createBiquadFilter();
 
         biquadFilter2.type = "peaking";
-        biquadFilter2.frequency.value = this.peakingFre + 100;
+        biquadFilter2.frequency.value = this.peakingFre + 80;
         biquadFilter2.Q.value = this.peakingRang;
         biquadFilter2.gain.value = this.peakingQ - 5;
 
@@ -105,17 +113,17 @@ export default class Audioplayer {
         biquadFilter3.type = "peaking";
         biquadFilter3.frequency.value = this.peakingFre + 150;
         biquadFilter3.Q.value = this.peakingRang;
-        biquadFilter3.gain.value = this.peakingQ - 7;
+        biquadFilter3.gain.value = this.peakingQ - 3;
 
         // 共振峰3
         const biquadFilter4 = this.audioCtx.createBiquadFilter();
 
         biquadFilter4.type = "peaking";
-        biquadFilter4.frequency.value = this.peakingFre + 200;
+        biquadFilter4.frequency.value = this.peakingFre + 800;
         biquadFilter4.Q.value = this.peakingRang;
-        biquadFilter4.gain.value = this.peakingQ - 9;
+        biquadFilter4.gain.value = this.peakingQ - 15;
 
-        this.scriptNode = this.changeAudioVoice(source);
+        this.scriptNode = this.changeAudioVoice(low);
 
         this.scriptNode.connect(biquadFilter);
         biquadFilter.connect(biquadFilter2);
