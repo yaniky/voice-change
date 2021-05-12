@@ -21,7 +21,8 @@ const config = merge(common, {
         port: local.port || 3000,
         disableHostCheck: true,
         host: local.host || "0.0.0.0",
-        historyApiFallback: true
+        historyApiFallback: true,
+        https: true
     },
     entry: "./src/index.js",
     output: {

@@ -48,3 +48,36 @@ document.getElementById("start2").onclick = async function() {
 document.getElementById("stop2").onclick = async function() {
     audioPlayer1.stop();
 };
+
+function getAuido() {
+    return new Promise(resolve => {
+        navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: false
+        })
+            .then(function(stream) {
+                /* 使用这个stream stream */
+                if (stream) {
+                    resolve(stream);
+                } else {
+                    resolve(false);
+                }
+            })
+            .catch(function(err) {
+                // eslint-disable-next-line no-console
+                console.error(err.message);
+                resolve(false);
+            });
+    });
+}
+
+const audioPlayer3 = new Audioplayer({
+    needChange: true
+});
+
+document.getElementById("mic").onclick = async function() {
+    const stream = await getAuido();
+
+    await audioPlayer3.setStream(stream);
+    audioPlayer3.ready().play();
+};
