@@ -23,30 +23,22 @@ export default class Audioplayer {
         this.stream = new MediaStream();
         this.scriptNode = null;
         this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        this.bufferSize = 4096;
+        this.bufferSize = 2048; //4096;
 
-        this.voiceFreMul = 1.4; // 音频倍数
+        this.voiceFreMul = 1.5; // 音频倍数
 
         this.peakingParam = [
             {
-                peakingFre: 450,
+                peakingFre: 600,
+                peakingGain: 20
+            },
+            {
+                peakingFre: 900,
                 peakingGain: 10
             },
             {
-                peakingFre: 550,
-                peakingGain: 25
-            },
-            {
-                peakingFre: 620,
-                peakingGain: 15
-            },
-            {
-                peakingFre: 700,
-                peakingGain: 22
-            },
-            {
-                peakingFre: 780,
-                peakingGain: 10
+                peakingFre: 1000,
+                peakingGain: 9
             }
         ];
 
@@ -134,7 +126,7 @@ export default class Audioplayer {
     _addPeakingBiquadFilter({
         peakingFre = 450, // 需要增强的频率
         peakingGain = 22, // 增强力度
-        peakingQ = 10, // 需要增强的区间
+        peakingQ = 15, // 需要增强的区间
         lastPoint
     } = {}) {
         const biquadFilter = this.audioCtx.createBiquadFilter();
